@@ -1,11 +1,11 @@
-//add gulp
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var autoprefixer = require('gulp-autoprefixer');
 var browserify = require('gulp-browserify');
-var clean = require('gulp-clean');
+var clean = require('gulp-clean'); //this is depreciated
+var del = require('del');
 var concat = require('gulp-concat');
 var merge = require('merge-stream');
 var newer = require('gulp-newer');
@@ -18,6 +18,7 @@ var htmlmin = require('gulp-htmlmin');
 
 var SOURCEPATHS = {
 	sassSource : 'src/scss/*.scss',
+	sassApp : 'src/scss/app.scss',
 	htmlSource : 'src/*.html',
 	htmlPartialSource : 'src/partial/*.html',
 	jsSource : 'src/js/**',
@@ -45,37 +46,28 @@ gulp.task('clean-scripts', function(){
 });
 
 gulp.task('clean-images', function() {
-	return gulp.src(APPPATH.img + '/**', {read: false, force: true })
-		.pipe(clean());
+  return del(APPPATH.img + './**');
 });
 
 gulp.task('sass', function(){
-	var bootstrapCSS = gulp.src('./node_modules/bootstrap/dist/css/bootstrap.css');
-	//look at the file in this folder
-	sassFiles = gulp.src(SOURCEPATHS.sassSource)
-	//add autoprefixer
-	.pipe(autoprefixer())
-	//compile it to css to this folder
-	.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
-	
-	//save file in destination
-	return merge(bootstrapCSS, sassFiles)
-		.pipe(concat('app.css'))
-		.pipe(gulp.dest(APPPATH.css))
+  sassFiles = gulp.src(SOURCEPATHS.sassApp)
+      .pipe(autoprefixer())
+      .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
+          .pipe(concat('app.css'))
+          .pipe(gulp.dest(APPPATH.css));
 });
 
-gulp.task('images', ['clean-images'], function(){
-	return gulp.src(SOURCEPATHS.imgSource)
-	//will check that the image is in the app folder and if its new copy it
-	.pipe(newer(APPPATH.img))
-	.pipe(imagemin())
-	.pipe(gulp.dest(APPPATH.img));
+gulp.task('images', ['clean-images'], function() {
+    return gulp.src(SOURCEPATHS.imgSource)
+      .pipe(newer(APPPATH.img))
+      .pipe(imagemin())
+      .pipe(gulp.dest(APPPATH.img));
 });
 
-gulp.task('moveFonts', function(){
-	gulp.src('./node_modules/bootstrap/dist/fonts/*.{eot,svg,ttf,woff,woff2}')
-		.pipe(gulp.dest(APPPATH.fonts));
-});
+// gulp.task('moveFonts', function(){
+// 	gulp.src('./node_modules/bootstrap/dist/fonts/*.{eot,svg,ttf,woff,woff2}')
+// 		.pipe(gulp.dest(APPPATH.fonts));
+// });
 
 gulp.task('scripts', ['clean-scripts'], function(){
 	gulp.src(SOURCEPATHS.jsSource)
@@ -94,23 +86,36 @@ gulp.task('compress', function(){
 		.pipe(gulp.dest(APPPATH.js))
 });
 
+// gulp.task('compresscss', function(){
+// 	var bootstrapCSS = gulp.src('./node_modules/bootstrap/dist/css/bootstrap.css');
+//	var sassFiles;
+// 	//look at the file in this folder
+// 	sassFiles = gulp.src(SOURCEPATHS.sassSource)
+// 		//add autoprefixer
+// 		.pipe(autoprefixer())
+// 		//compile it to css to this folder
+// 		.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
+
+// 	//save file in destination
+// 	return merge(bootstrapCSS, sassFiles)
+// 		.pipe(concat('app.css'))
+// 		.pipe(cssmin())
+// 		.pipe(rename({suffix:'.min'}))
+// 		.pipe(gulp.dest(APPPATH.css))
+// });
+
 gulp.task('compresscss', function(){
 
-	var bootstrapCSS = gulp.src('./node_modules/bootstrap/dist/css/bootstrap.css');
-	//look at the file in this folder
-	sassFiles = gulp.src(SOURCEPATHS.sassSource)
-		//add autoprefixer
-		.pipe(autoprefixer())
-		//compile it to css to this folder
-		.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
-
-	//save file in destination
-	return merge(bootstrapCSS, sassFiles)
-		.pipe(concat('app.css'))
-		.pipe(cssmin())
-		.pipe(rename({suffix:'.min'}))
-		.pipe(gulp.dest(APPPATH.css))
+  sassFiles = gulp.src(SOURCEPATHS.sassSource)
+      .pipe(autoprefixer())
+      .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
+          .pipe(concat('app.css'))
+          .pipe(cssmin())
+          .pipe(rename({suffix: '.min'}))
+          .pipe(gulp.dest(APPPATH.css));
 });
+
+
 
 gulp.task('minifyHtml', function(){
 	return gulp.src(SOURCEPATHS.htmlSource)
@@ -145,11 +150,12 @@ gulp.task('serve', ['sass'], function(){
 	});
 });
 
-gulp.task('watch', ['serve', 'sass', 'clean-html', 'clean-scripts', 'scripts', 'moveFonts', 'images', 'html'], function(){
+gulp.task('watch', ['serve', 'sass', 'clean-html', 'clean-scripts', 'scripts', 'images', 'html'], function(){
 	gulp.watch([SOURCEPATHS.sassSource], ['sass']);
 	//gulp.watch([SOURCEPATHS.htmlSource], ['copy']);
 	gulp.watch([SOURCEPATHS.jsSource], ['scripts']);
-	gulp.watch([SOURCEPATHS.htmlSource, SOURCEPATHS.htmlPartialSource], ['html']);
+	gulp.watch([SOURCEPATHS.imgSource], ['images', 'clean-images']);
+	gulp.watch([SOURCEPATHS.htmlSource, SOURCEPATHS.htmlPartialSource], ['html', 'clean-html']);
 });
 
 gulp.task('default', ['watch']);
