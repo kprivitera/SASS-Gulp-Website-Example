@@ -45,3 +45,41 @@
 	background-size:cover;
 	height:$height;
 }
+
+@mixin button($bg-colour, $hover-colour, $colour){
+	@include border-radius(5px);
+	display:block;
+	background-color: $bg-colour;
+	color: $colour;
+	text-decoration:none;
+	text-transform: uppercase;
+	font-size: $btn-font-size;
+	transition: all .3s ease;
+	font-weight: $btn-font-weight;
+	padding: 10px 30px;
+	margin-top:30px;
+	@include tablet {
+		display:inline-block;
+	}
+	&:hover {
+		background-color: $hover-colour;
+	}
+}
+
+@mixin grid-images($qty, $margin){
+	width: ((100% - (($qty - 1) * $margin)) / $qty);
+	&:nth-child(n){
+		margin-right: $margin;
+		margin-bottom: $margin;
+	}
+	&:nth-child(#{$qty}n + 1) {
+		margin-right:0;
+		margin-bottom:0;
+	}
+}
+
+
+
+
+
+

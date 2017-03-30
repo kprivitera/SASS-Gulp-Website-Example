@@ -1,0 +1,39 @@
+table {
+	width:100%;
+	text-align:left;
+	font-size:$table-font-size;
+	border-collapse:collapse;
+
+	> caption {
+		text-align: left;
+		font-family: $table-caption-font-family;
+		font-size: map-get($heading-font-size, h2);
+		font-weight:700;
+		padding:5px;
+		color:$table-caption-text-colour;
+		margin-bottom: 20px;
+	}
+	thead th {
+		background-color: darken($blue, 20);
+		color: $table-colour;
+		font-size:1.3rem;	
+	}
+	> thead,
+	> tbody {
+		> tr {
+			color: $table-colour;
+			background-color: $dark-blue;
+			&:nth-child(odd){
+				background-color: $blue;
+			}	
+			&:hover {
+				background-color: $table-hover-background-colour;
+			}
+			th, td {
+				padding:10px;
+				border-bottom: 1px dotted $dark-blue;
+			}
+		}
+	}
+}
+

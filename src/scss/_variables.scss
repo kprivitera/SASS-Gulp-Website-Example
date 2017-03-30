@@ -6,7 +6,7 @@ $yellow: #FFBA00;
 $red: #fe2d28;
 $black: #000;
 
-$bg-colour: $dark-blue;
+$bg-colour: $blue;
 $text-colour: $black;
 
 $paragraph-font-size: 1.2rem;
@@ -51,6 +51,25 @@ $grid-max-width: 1200px;
 
 //buttons
 $btn-font-size: 16px;
+$btn-font-weight: bold;
+
+//tables
+$table-font-size: 1.2rem;
+$table-caption-font-family: $heading-font-family;
+$table-caption-text-colour:$yellow;
+$table-colour: $white;
+$table-hover-background-colour: darken($yellow, 5);
+
+//services
+$paragraph-services-font-size: 1rem;
+$paragraph-service-colour: $white;
 
 //footer 
 $bg-footer: $dark-blue;
+$footer-colour: $white;
+$site-info-bg-colour: $yellow;
+$site-info-colour:$dark-blue;
+
+
+
+
